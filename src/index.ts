@@ -1,15 +1,21 @@
-import { EventLoop, MacroTask, MicroTask } from "./event-loop";
+import {
+  EventLoop,
+  EventLoopPort,
+  MacroTask,
+  MacroTaskPort,
+  MicroTask,
+} from "./event-loop";
 
-const eventLoop = new EventLoop();
+const eventLoop: EventLoopPort = new EventLoop();
 
-new MacroTask(eventLoop, (macroTask: MacroTask) => {
+new MacroTask(eventLoop, (macroTask: MacroTaskPort) => {
   console.log(123);
 
   new MicroTask(macroTask, () => {
     console.log("001");
   });
 
-  new MacroTask(eventLoop, (macroTask: MacroTask) => {
+  new MacroTask(eventLoop, (macroTask: MacroTaskPort) => {
     console.log(789);
 
     new MicroTask(macroTask, () => {
@@ -18,7 +24,7 @@ new MacroTask(eventLoop, (macroTask: MacroTask) => {
   });
 });
 
-new MacroTask(eventLoop, (macroTask: MacroTask) => {
+new MacroTask(eventLoop, (macroTask: MacroTaskPort) => {
   console.log(456);
 
   new MicroTask(macroTask, () => {

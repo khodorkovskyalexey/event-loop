@@ -1,17 +1,23 @@
 type Handler<T> = (task: T) => void;
 
-interface MacroTaskPort {
+export interface MicroTaskPort {
+  run: () => void;
+}
+
+export interface MacroTaskPort {
   addMicroTask: Handler<MicroTask>;
+  run: () => void;
 }
 
-interface EventLoopPort {
-  addMacroTask: Handler<MacroTask>;
+export interface EventLoopPort {
+  addMacroTask: Handler<MacroTaskPort>;
+  run: () => void;
 }
 
-export class MicroTask {
-  private handler: Handler<MicroTask>;
+export class MicroTask implements MicroTaskPort {
+  private handler: Handler<MicroTaskPort>;
 
-  constructor(macroTask: MacroTaskPort, handler: Handler<MicroTask>) {
+  constructor(macroTask: MacroTaskPort, handler: Handler<MicroTaskPort>) {
     this.handler = handler;
     macroTask.addMicroTask(this);
   }
@@ -21,17 +27,18 @@ export class MicroTask {
   }
 }
 
-export class MacroTask {
-  private handler: Handler<MacroTask>;
-  private microTaskQueue: MicroTask[] = [];
+export class MacroTask implements MacroTaskPort {
+  private handler: Handler<MacroTaskPort>;
+  private microTaskQueue: MicroTaskPort[] = [];
 
-  constructor(eventLoop: EventLoopPort, handler: Handler<MacroTask>) {
+  constructor(eventLoop: EventLoopPort, handler: Handler<MacroTaskPort>) {
     this.handler = handler;
     eventLoop.addMacroTask(this);
   }
 
   run() {
     this.handler(this);
+
     while (this.microTaskQueue.length) {
       const nextOneMicroTask = this.microTaskQueue.shift();
 
@@ -41,15 +48,15 @@ export class MacroTask {
     }
   }
 
-  addMicroTask(microTask: MicroTask) {
+  addMicroTask(microTask: MicroTaskPort) {
     this.microTaskQueue.push(microTask);
   }
 }
 
 export class EventLoop implements EventLoopPort {
-  private macroTaskQueue: MacroTask[] = [];
+  private macroTaskQueue: MacroTaskPort[] = [];
 
-  addMacroTask(macroTask: MacroTask) {
+  addMacroTask(macroTask: MacroTaskPort) {
     this.macroTaskQueue.push(macroTask);
   }
 
