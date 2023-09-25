@@ -54,7 +54,7 @@ export class EventLoop implements EventLoopPort {
   }
 
   run() {
-    while(this.macroTaskQueue.length) {
+    while (this.macroTaskQueue.length) {
       const nextOneMacroTask = this.macroTaskQueue.shift();
 
       if (nextOneMacroTask) {

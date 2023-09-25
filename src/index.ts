@@ -6,14 +6,14 @@ new MacroTask(eventLoop, (macroTask: MacroTask) => {
   console.log(123);
 
   new MicroTask(macroTask, () => {
-    console.log('001');
+    console.log("001");
   });
 
   new MacroTask(eventLoop, (macroTask: MacroTask) => {
     console.log(789);
 
     new MicroTask(macroTask, () => {
-      console.log('002');
+      console.log("002");
     });
   });
 });
@@ -22,7 +22,7 @@ new MacroTask(eventLoop, (macroTask: MacroTask) => {
   console.log(456);
 
   new MicroTask(macroTask, () => {
-    console.log('003');
+    console.log("003");
   });
 });
 
