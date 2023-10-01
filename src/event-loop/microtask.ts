@@ -1,4 +1,4 @@
-import { Handler } from "./types";
+import { Handler } from "./common/types";
 import { MacroTaskPort } from "./macrotask";
 
 export interface MicroTaskPort {
